@@ -10,7 +10,7 @@ services:
       - ":2181:2181"
     hostname: "zookeeper"
     networks: 
-        - alertas
+        - local
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -28,7 +28,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks: 
-      - alertas
+      - local
 
   mongo_humano: 
     image: mongo
@@ -40,27 +40,34 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     networks:
-      - alertas
+      - local
 
-  # mongo_satelite:
-  #   image: mongo
-  #   container_name: db-satelite
-  #   restart: always
-  #   ports:
-  #    - 27018:27017
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: root
-  #     MONGO_INITDB_ROOT_PASSWORD: example
+  mongo_satelite:
+    image: mongo
+    container_name: db-satelite
+    restart: always
+    ports:
+     - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
-  app: 
+  registro: 
     image: alertas/node
     build: .
     command: npm start
     ports: 
      - "3000:3000"
-    volumes: 
-     - .:/usr/app
+    volumes:
+     - ./src/services/registro:/usr/app
+    depends_on:
+      - kafka
+      - mongo_humano
+      - mongo_satelite
+    links:
+      - mongo_humano
+      - mongo_satelite
 
 networks:
-  alertas:
+  local:
     driver: bridge
