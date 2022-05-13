@@ -54,12 +54,12 @@ services:
 
   registro: 
     image: alertas/node
-    build: ./src/services/registro
+    build: ./registro
     command: npm start
     ports: 
      - "3000:3000"
     volumes:
-     - ./src/services/registro:/usr/app
+     - ./registro:/usr/app
     depends_on:
       - kafka
       - mongo_humano
@@ -70,14 +70,14 @@ services:
     networks:
       - local
 
-  consulta-humano: 
+  consulta: 
     image: alertas/node
-    build: ./src/services/consulta-humano
+    build: ./consulta
     command: npm start
     ports: 
      - "3001:3000"
     volumes:
-     - ./src/services/consulta-humano:/usr/app
+     - ./consulta:/usr/app
     depends_on:
       - kafka
       - mongo_humano
