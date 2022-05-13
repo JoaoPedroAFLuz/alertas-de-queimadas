@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/status', (req, res) => {
-  res.json({ status: `Server is ${STATUS}` });
+  res.json({ status: `Registro está ${STATUS}` });
 });
 
 app.post('/alertas/humano', async (req, res) => {

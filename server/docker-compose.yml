@@ -32,7 +32,6 @@ services:
 
   mongo_humano: 
     image: mongo
-    container_name: db-humano
     restart: always
     ports:
       - 27017:27017
@@ -42,19 +41,20 @@ services:
     networks:
       - local
 
-  mongo_satelite:
+  mongo_satelite: 
     image: mongo
-    container_name: db-satelite
     restart: always
     ports:
-     - 27018:27017
+      - 27018:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - local
 
   registro: 
     image: alertas/node
-    build: .
+    build: ./src/services/registro
     command: npm start
     ports: 
      - "3000:3000"
@@ -67,7 +67,27 @@ services:
     links:
       - mongo_humano
       - mongo_satelite
+    networks:
+      - local
 
+  consulta-humano: 
+    image: alertas/node
+    build: ./src/services/consulta-humano
+    command: npm start
+    ports: 
+     - "3001:3000"
+    volumes:
+     - ./src/services/consulta-humano:/usr/app
+    depends_on:
+      - kafka
+      - mongo_humano
+      - mongo_satelite
+    links:
+      - mongo_humano
+      - mongo_satelite
+    networks:
+      - local
+      
 networks:
   local:
     driver: bridge
