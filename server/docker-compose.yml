@@ -64,9 +64,6 @@ services:
       - kafka
       - mongo_humano
       - mongo_satelite
-    links:
-      - mongo_humano
-      - mongo_satelite
     networks:
       - local
 
@@ -82,12 +79,21 @@ services:
       - kafka
       - mongo_humano
       - mongo_satelite
-    links:
-      - mongo_humano
-      - mongo_satelite
     networks:
       - local
-      
+
+  emissao: 
+    image: alertas/node
+    build: ./emissao
+    command: npm start
+    volumes:
+     - ./emissao:/usr/app
+    depends_on:
+      - kafka
+      - registro
+    networks:
+      - local
+
 networks:
   local:
     driver: bridge
