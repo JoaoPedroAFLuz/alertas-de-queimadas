@@ -1,38 +1,42 @@
 import express from 'express';
 import cors from 'cors';
+import { Kafka } from 'kafkajs';
 
-import { insertAlertaHumano } from './db-humano.js';
-import { insertAlertaSatelite } from './db-satelite.js';
+import routes from './routes.js';
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
-const STATUS = 'online'
 
 const app = express();
+
+// Conecta com o kafka
+const kafka = new Kafka({
+  clientId: 'api',
+  brokers: ['kafka:9092'],
+});
+
+const producer = kafka.producer();
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/status', (req, res) => {
-  res.json({ status: `Registro está ${STATUS}` });
+// Disponibiliza o producer para todas as rotas
+app.use((req, res, next) => {
+  req.producer = producer;
+  return next();
 });
 
-app.post('/alertas/humano', async (req, res) => {
-  const alerta = req.body;
+// Cadastra as rotas da aplicação
+app.use(routes);
 
-  await insertAlertaHumano(alerta);
 
-  res.sendStatus(201);
-});
+async function run() {
+  await producer.connect();
+  console.log('conectou');
 
-app.post('/alertas/satelite', async (req, res) => {
-  const alerta = req.body;
+  app.listen(3000, () => {
+    console.log(`HTTP server running on ${HOST}:${PORT}`);
+  });
+}
 
-  await insertAlertaSatelite(alerta);
-
-  res.sendStatus(201);
-});
-
-app.listen(PORT, HOST, () => {
-  console.log(`HTTP server running on ${HOST}:${PORT}`);
-});
+run().catch(console.error);

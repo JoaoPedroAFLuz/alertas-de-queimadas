@@ -1,36 +1,22 @@
-version: "3.8"
+version: '3.8'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+    image: wurstmeister/zookeeper:latest
     ports:
-      - ":2181:2181"
-    hostname: "zookeeper"
-    networks: 
-        - local
+      - '2181:2181'
 
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: wurstmeister/kafka:2.11-1.1.0
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     depends_on:
       - zookeeper
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    hostname: "kafka"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks: 
-      - local
 
-  mongo_humano: 
+  mongo_humano:
     image: mongo
     restart: always
     ports:
@@ -38,10 +24,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    networks:
-      - local
 
-  mongo_satelite: 
+  mongo_satelite:
     image: mongo
     restart: always
     ports:
@@ -49,51 +33,39 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    networks:
-      - local
 
-  registro: 
+  registro:
     image: alertas/node
     build: ./registro
     command: npm start
-    ports: 
-     - "3000:3000"
+    ports:
+      - '3000:3000'
     volumes:
-     - ./registro:/usr/app
+      - ./registro:/usr/app
     depends_on:
       - kafka
       - mongo_humano
       - mongo_satelite
-    networks:
-      - local
 
-  consulta: 
+  consulta:
     image: alertas/node
     build: ./consulta
     command: npm start
-    ports: 
-     - "3001:3000"
+    ports:
+      - '3001:3000'
     volumes:
-     - ./consulta:/usr/app
+      - ./consulta:/usr/app
     depends_on:
       - kafka
       - mongo_humano
       - mongo_satelite
-    networks:
-      - local
 
-  emissao: 
+  emissao:
     image: alertas/node
     build: ./emissao
     command: npm start
     volumes:
-     - ./emissao:/usr/app
+      - ./emissao:/usr/app
     depends_on:
       - kafka
       - registro
-    networks:
-      - local
-
-networks:
-  local:
-    driver: bridge

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
-import fetch from 'node-fetch';
+import { Kafka } from 'kafkajs';
 
+// Criada conexão com o servidor de e-mail
 var transport = nodemailer.createTransport({
   host: 'smtp.mailtrap.io',
   port: 2525,
@@ -10,11 +11,20 @@ var transport = nodemailer.createTransport({
   },
 });
 
-async function enviar() {
-  const response = await fetch('http://server-consulta-1:3000/alertas/humano');
-  const data = await response.json();
+// Cria conexão com o kafka
+const kafka = new Kafka({
+  brokers: ['kafka:9092'],
+  clientId: 'emissor',
+});
 
-  const { local, dataHora, tipo, observacoes, categoria } = data[0];
+//Define o tópico que será consumido
+const topic = 'alerta-humano';
+
+// Define o grupo do consumidor
+const consumer = kafka.consumer({ groupId: 'alerta-humano' });
+
+async function enviar(alerta) {
+  const { local, dataHora, tipo, observacoes, categoria } = alerta;
 
   await transport.sendMail({
     from: 'Alertas de Queimadas <alertas@queimadas.com.br>',
@@ -31,4 +41,20 @@ async function enviar() {
   });
 }
 
-enviar();
+async function run() {
+  await consumer.connect();
+  await consumer.subscribe({ topic });
+
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`;
+      console.log(`- ${prefix} ${message.key}#${message.value}`);
+
+      const alerta = JSON.parse(message.value);
+
+      enviar(alerta);
+    },
+  });
+}
+
+run().catch(console.error);
