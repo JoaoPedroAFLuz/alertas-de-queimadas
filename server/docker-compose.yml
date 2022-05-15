@@ -46,16 +46,26 @@ services:
       - mongo_humano
       - mongo_satelite
 
-  consulta:
-    build: ./consulta
+  consulta-humano:
+    build: ./consulta-humano
     command: npm start
     ports:
       - '3001:3000'
     volumes:
-      - ./consulta:/usr/app
+      - ./consulta-humano:/usr/app
     depends_on:
       - registro
       - mongo_humano
+      
+  consulta-satelite:
+    build: ./consulta-satelite
+    command: npm start
+    ports:
+      - '3002:3000'
+    volumes:
+      - ./consulta-satelite:/usr/app
+    depends_on:
+      - registro
       - mongo_satelite
 
   emissao-humano:

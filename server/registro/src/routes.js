@@ -13,8 +13,10 @@ routes.get('/status', (req, res) => {
 routes.post('/alertas/humano', async (req, res) => {
   const alerta = req.body;
 
+  // Insere o alerta no banco de dados dos alertas humanos
   await insertAlertaHumano(alerta);
 
+  // Envia o alerta para o tópico dos alertas humanos no kafka
   await req.producer.send({
     topic: 'alerta-humano',
     messages: [
@@ -30,8 +32,10 @@ routes.post('/alertas/humano', async (req, res) => {
 routes.post('/alertas/satelite', async (req, res) => {
   const alerta = req.body;
 
+  // Insere o alerta no banco de dados dos alertas de satélites
   await insertAlertaSatelite(alerta);
 
+  // Envia o alerta para o tópico dos alertas de satélite no kafka
   await req.producer.send({
     topic: 'alerta-satelite',
     messages: [
