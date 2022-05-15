@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { Kafka } from 'kafkajs';
+import { Kafka, Partitioners } from 'kafkajs';
 
 import routes from './routes.js';
 
@@ -15,7 +15,9 @@ const kafka = new Kafka({
   brokers: ['kafka:9092'],
 });
 
-const producer = kafka.producer();
+const producer = kafka.producer({
+  createPartitioner: Partitioners.DefaultPartitioner,
+});
 
 app.use(cors());
 app.use(express.json());
@@ -29,10 +31,8 @@ app.use((req, res, next) => {
 // Cadastra as rotas da aplicação
 app.use(routes);
 
-
 async function run() {
   await producer.connect();
-  console.log('conectou');
 
   app.listen(3000, () => {
     console.log(`HTTP server running on ${HOST}:${PORT}`);

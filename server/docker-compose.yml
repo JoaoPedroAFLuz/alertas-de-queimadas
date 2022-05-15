@@ -35,7 +35,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
 
   registro:
-    image: alertas/node
     build: ./registro
     command: npm start
     ports:
@@ -48,7 +47,6 @@ services:
       - mongo_satelite
 
   consulta:
-    image: alertas/node
     build: ./consulta
     command: npm start
     ports:
@@ -56,16 +54,22 @@ services:
     volumes:
       - ./consulta:/usr/app
     depends_on:
-      - kafka
+      - registro
       - mongo_humano
       - mongo_satelite
 
-  emissao:
-    image: alertas/node
-    build: ./emissao
+  emissao-humano:
+    build: ./emissao-humano
     command: npm start
     volumes:
-      - ./emissao:/usr/app
+      - ./emissao-humano:/usr/app
     depends_on:
-      - kafka
+      - registro
+      
+  emissao-satelite:
+    build: ./emissao-satelite
+    command: npm start
+    volumes:
+      - ./emissao-satelite:/usr/app
+    depends_on:
       - registro

@@ -14,7 +14,7 @@ var transport = nodemailer.createTransport({
 // Cria conexão com o kafka
 const kafka = new Kafka({
   brokers: ['kafka:9092'],
-  clientId: 'emissor',
+  clientId: 'emissor-humano',
 });
 
 //Define o tópico que será consumido
@@ -31,7 +31,7 @@ async function enviar(alerta) {
     to: 'Fulano <fulano@silva.com.br',
     subject: 'Novo alerta de queimada do seu interesse',
     html: [
-      '<h1>Alerta: </h1>',
+      '<h1>Alerta enviado por humano: </h1>',
       `<p>Local: ${local}</p>`,
       `<p>Data e hora: ${dataHora}</p>`,
       `<p>Tipo: ${tipo}</p>`,
@@ -46,10 +46,7 @@ async function run() {
   await consumer.subscribe({ topic });
 
   await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`;
-      console.log(`- ${prefix} ${message.key}#${message.value}`);
-
+    eachMessage: ({ message }) => {
       const alerta = JSON.parse(message.value);
 
       enviar(alerta);

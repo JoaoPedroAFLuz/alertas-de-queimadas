@@ -21,10 +21,16 @@ app.get('/alertas', async (req, res) => {
   let alertas = [];
 
   const alertasHumano = await findAllHumano();
-  alertas.push(alertasHumano);
+
+  alertasHumano.forEach((alerta) => {
+    alertas.push(alerta);
+  });
 
   const alertasSatelite = await findAllSatelite();
-  alertas.push(alertasSatelite);
+  
+  alertasSatelite.forEach((alerta) => {
+    alertas.push(alerta);
+  });
 
   res.json(alertas);
 });
