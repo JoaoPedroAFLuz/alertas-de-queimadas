@@ -47,12 +47,7 @@ async function run() {
 
   await consumer.run({
     eachMessage: async ({ message }) => {
-      console.log('Mensagem sem JSON.parse', message.value);
-
       const alerta = JSON.parse(message.value);
-
-      console.log('Mensagem com JSON.parse', alerta);
-
 
       enviar(alerta);
     },
