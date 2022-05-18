@@ -1,23 +1,31 @@
 import 'dotenv/config';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const client = new MongoClient(process.env.DATABASE_HUMANO_URL);
 const database = client.db('alertas');
 const collection = database.collection('humano2021');
+await client.connect();
 
-export async function findAllHumano() {
+export async function findAll() {
   try {
-    await client.connect();
     let alertas = [];
 
     const cursor = collection.find();
 
-    await cursor.forEach(alerta => alertas.push(alerta))
+    await cursor.forEach((alerta) => alertas.push(alerta));
 
     return alertas;
   } catch (e) {
     console.log(e);
-  } finally {
-    await client.close();
+  }
+}
+
+export async function findOne(id) {
+  try {
+    const alerta = await collection.findOne({ _id: ObjectId(id) });
+
+    return alerta;
+  } catch (e) {
+    console.log(e);
   }
 }

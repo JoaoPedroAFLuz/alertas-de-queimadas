@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
-import { findAllHumano } from './db-humano.js';
+import { findAll, findOne } from './db-humano.js';
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -17,7 +17,15 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/alertas/humano', async (req, res) => {
-  const alertas = await findAllHumano();
+  const alertas = await findAll();
+
+  res.json(alertas);
+});
+
+app.get('/alertas/humano/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const alertas = await findOne(id);
 
   res.json(alertas);
 });
