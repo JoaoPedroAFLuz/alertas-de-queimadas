@@ -17,7 +17,9 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/alertas/humano', async (req, res) => {
-  const alertas = await findAll();
+  const { pagina, alertasPorPagina } = req.query;
+
+  const alertas = await findAll(Number(pagina), Number(alertasPorPagina));
 
   res.json(alertas);
 });
@@ -25,7 +27,7 @@ app.get('/alertas/humano', async (req, res) => {
 app.get('/alertas/humano/:id', async (req, res) => {
   const { id } = req.params;
 
-  const alertas = await findOne(id);
+  const alertas = await findAll();
 
   res.json(alertas);
 });

@@ -6,11 +6,17 @@ const database = client.db('alertas');
 const collection = database.collection('humano2021');
 await client.connect();
 
-export async function findAll() {
+export async function findAll(pagina, alertasPorPagina) {
   try {
     let alertas = [];
 
-    const cursor = collection.find();
+    const alertasPagina = (pagina - 1) * alertasPorPagina;
+
+    const cursor = collection
+      .find()
+      .sort({ dataHora: -1 })
+      .limit(alertasPorPagina)
+      .skip(alertasPagina);
 
     await cursor.forEach((alerta) => alertas.push(alerta));
 

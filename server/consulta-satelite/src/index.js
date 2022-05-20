@@ -17,7 +17,9 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/alertas/satelite', async (req, res) => {
-  const alertas = await findAll();
+  const { pagina, alertasPorPagina } = req.query;
+
+  const alertas = await findAll(Number(pagina), Number(alertasPorPagina));
 
   res.json(alertas);
 });

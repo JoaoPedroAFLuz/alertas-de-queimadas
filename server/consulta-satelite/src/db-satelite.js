@@ -1,24 +1,28 @@
 import 'dotenv/config';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const client = new MongoClient(process.env.DATABASE_SATELITE_URL);
 const database = client.db('alertas');
 const collection = database.collection('satelite2021');
 await client.connect();
 
-export async function findAll() {
+export async function findAll(pagina, alertasPorPagina) {
   try {
     let alertas = [];
 
-    const cursor = collection.find();
+    const alertasPagina = (pagina - 1) * alertasPorPagina;
+
+    const cursor = collection
+      .find()
+      .sort({ datahora: -1 })
+      .limit(alertasPorPagina)
+      .skip(alertasPagina);
 
     await cursor.forEach((alerta) => alertas.push(alerta));
 
     return alertas;
   } catch (e) {
     console.log(e);
-  } finally {
-    await client.close();
   }
 }
 
