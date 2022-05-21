@@ -27,7 +27,7 @@ app.get('/alertas/humano', async (req, res) => {
 app.get('/alertas/humano/:id', async (req, res) => {
   const { id } = req.params;
 
-  const alertas = await findAll();
+  const alertas = await findOne(id);
 
   res.json(alertas);
 });

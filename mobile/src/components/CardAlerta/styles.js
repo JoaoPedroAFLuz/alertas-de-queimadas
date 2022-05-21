@@ -1,8 +1,9 @@
 import styled from 'styled-components/native';
 
-export const Alert = styled.View`
+export const Alerta = styled.TouchableOpacity`
+  align-self: center;
   background: #fff;
-  width: 90%;
+  width: 100%;
   padding: 8px 16px;
   align-items: center;
   flex-direction: column;
