@@ -35,3 +35,23 @@ export async function findOne(id) {
     console.log(e);
   }
 }
+
+export async function findAllFiltrado(pagina, alertasPorPagina, cidade) {
+  try {
+    let alertas = [];
+
+    const alertasPagina = (pagina - 1) * alertasPorPagina;
+
+    const cursor = collection
+      .find({ municipio: { $regex: cidade, $options: 'i' } })
+      .sort({ dataHora: -1 })
+      .limit(alertasPorPagina)
+      .skip(alertasPagina);
+
+    await cursor.forEach((alerta) => alertas.push(alerta));
+
+    return alertas;
+  } catch (e) {
+    console.log(e);
+  }
+}

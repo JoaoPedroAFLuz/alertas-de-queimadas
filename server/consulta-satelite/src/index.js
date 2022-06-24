@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
-import { findAll, findOne } from './db-satelite.js';
+import { findAll, findOne, findAllFiltrado } from './db-satelite.js';
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -31,6 +31,14 @@ app.get('/alertas/satelite/:id', async (req, res) => {
 
   res.json(alertas);
 });
+
+app.get('/alertas/humano/filtrado/:cidade', async (req, res) => {
+  const { pagina, alertasPorPagina, cidade } = req.params;
+
+  const alertas = await findAllFiltrado(Number(pagina), Number(alertasPorPagina), cidade);
+
+  res.json(alertas);
+})
 
 app.listen(PORT, HOST, () => {
   console.log(`HTTP server running on ${HOST}:${PORT}`);
