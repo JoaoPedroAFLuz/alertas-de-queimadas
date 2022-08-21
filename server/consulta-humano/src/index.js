@@ -24,7 +24,7 @@ app.get('/alertas/humano', async (req, res) => {
   res.json(alertas);
 });
 
-app.get('/alertas/humano/:id', async (req, res) => {
+app.get('/alertas/humano/findOne/:id', async (req, res) => {
   const { id } = req.params;
 
   const alertas = await findOne(id);
@@ -32,13 +32,19 @@ app.get('/alertas/humano/:id', async (req, res) => {
   res.json(alertas);
 });
 
-app.get('/alertas/humano/filtrado/:cidade', async (req, res) => {
-  const { pagina, alertasPorPagina, cidade } = req.params;
+app.get('/alertas/humano/cidade', async (req, res) => {
+  const { pagina, alertasPorPagina, cidade } = req.query;
 
-  const alertas = await findAllFiltrado(Number(pagina), Number(alertasPorPagina), cidade);
+  const alertas = await findAllFiltrado(
+    Number(pagina),
+    Number(alertasPorPagina),
+    cidade
+  );
+
+  console.log('Alertas:', alertas);
 
   res.json(alertas);
-})
+});
 
 app.listen(PORT, HOST, () => {
   console.log(`HTTP server running on ${HOST}:${PORT}`);

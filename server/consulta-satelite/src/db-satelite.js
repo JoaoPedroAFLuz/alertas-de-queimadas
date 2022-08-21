@@ -40,10 +40,16 @@ export async function findAllFiltrado(pagina, alertasPorPagina, cidade) {
   try {
     let alertas = [];
 
+    cidade = cidade
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .trim();
+
     const alertasPagina = (pagina - 1) * alertasPorPagina;
 
     const cursor = collection
-      .find({ municipio: { $regex: cidade, $options: 'i' } })
+      .find({ municipio: cidade })
       .sort({ dataHora: -1 })
       .limit(alertasPorPagina)
       .skip(alertasPagina);

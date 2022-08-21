@@ -40,6 +40,12 @@ export async function findAllFiltrado(pagina, alertasPorPagina, cidade) {
   try {
     let alertas = [];
 
+    // cidade = cidade
+    //   .normalize('NFD')
+    //   .replace(/[\u0300-\u036f]/g, '')
+    //   .toUpperCase();
+    cidade = cidade.trim();
+
     const alertasPagina = (pagina - 1) * alertasPorPagina;
 
     const cursor = collection

@@ -11,7 +11,9 @@ routes.get('/status', (req, res) => {
 });
 
 routes.post('/alertas/humano', async (req, res) => {
-  const alerta = req.body;
+  let alerta = req.body;
+
+  alerta.local = alerta.local.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
   // Insere o alerta no banco de dados dos alertas humanos
   await insertAlertaHumano(alerta);
