@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 
-// eslint-disable-next-line import/no-unresolved
-import { ALERTA_HUMANO_API, ALERTA_SATELITE_API } from '@env';
-
 import {
   Container,
   Alert,
@@ -13,6 +10,7 @@ import {
   Key,
   Value,
 } from './styles';
+import api from '../../services/api';
 
 export function Detalhes({ route }) {
   const [alerta, setAlerta] = useState([]);
@@ -22,16 +20,13 @@ export function Detalhes({ route }) {
 
   const carregarAlertas = useCallback(async () => {
     try {
-      const url = tipoAlerta === 'humano'
-        ? `${ALERTA_HUMANO_API}/alertas/humano/${alertaId}`
-        : `${ALERTA_SATELITE_API}/alertas/satelite/${alertaId}`;
-
-      const response = await fetch(url);
-      const alertaAPI = await response.json();
+      const alertaAPI = await api.carregarAlerta(alertaId, tipoAlerta);
 
       const data = tipoAlerta === 'humano'
-        ? moment(alertaAPI.dataHora).format('DD/MM/YYYY HH:mm:ss')
-        : moment(alertaAPI.datahora?.['$date']).format('DD/MM/YYYY HH:mm:ss');
+        ? moment(alertaAPI.dataHora).format('HH:mm:ss DD/MM/YYYY')
+        : moment(alertaAPI.datahora, 'YYYY/MM/DD HH:mm:ss').format(
+          'HH:mm:ss DD/MM/YYYY',
+        );
 
       setDataHora(data);
 

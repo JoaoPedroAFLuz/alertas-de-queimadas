@@ -11,9 +11,11 @@ import {
   BotaoAlerta,
   FlatListAlertas,
 } from './styles';
+import { SearchBar } from '../../components/SearchBar';
 
 export function Feed({ navigation }) {
   const [tipoAlerta, setTipoAlerta] = useState('humano');
+  const [cidade, setCidade] = useState('');
   const [alertas, setAlertas] = useState([]);
   const [pagina, setPagina] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,25 @@ export function Feed({ navigation }) {
     setUltimaPagina(novosAlertas.length === 0);
     setPagina((prevState) => prevState + 1);
     setAlertas((prevState) => [...prevState, ...novosAlertas]);
+
+    setIsLoading(false);
+  }
+
+  async function carregarAlertasFiltrados() {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    const novosAlertas = await api.carregarAlertasFiltrados(
+      tipoAlerta,
+      pagina,
+      alertasPorPagina,
+      cidade,
+    );
+
+    setUltimaPagina(novosAlertas.length === 0);
+    setPagina((prevState) => prevState + 1);
+    setAlertas(novosAlertas);
 
     setIsLoading(false);
   }
@@ -83,6 +104,8 @@ export function Feed({ navigation }) {
           </TextoAlerta>
         </BotaoAlerta>
       </ContainerBotao>
+
+      <SearchBar setBusca={setCidade} onClick={() => carregarAlertasFiltrados()} />
 
       <FlatListAlertas
         data={alertas}

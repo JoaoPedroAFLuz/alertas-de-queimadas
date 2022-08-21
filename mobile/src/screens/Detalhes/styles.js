@@ -11,7 +11,7 @@ export const Container = styled.View`
 `;
 
 export const Alert = styled.View`
-  background: #ddd;
+  background: #fff;
   width: 90%;
   padding: 8px 16px;
   align-items: center;
@@ -37,7 +37,9 @@ export const Title = styled.Text`
   font-weight: bold;
 `;
 
-export const Key = styled.Text``;
+export const Key = styled.Text`
+  font-weight: bold;
+`;
 
 export const Value = styled.Text`
   margin-top: 5px;
