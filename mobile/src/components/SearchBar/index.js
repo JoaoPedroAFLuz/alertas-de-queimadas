@@ -5,7 +5,11 @@ import { Container, TextInput } from './styles';
 export function SearchBar({ setBusca, onClick }) {
   return (
     <Container>
-      <TextInput placeholder="Busque por uma cidade..." onChangeText={(event) => setBusca(event)} />
+      <TextInput
+        placeholder="Busque por uma cidade..."
+        placeholderTextColor="#aaaaaa"
+        onChangeText={(event) => setBusca(event)}
+      />
       <Icon style={{ padding: 8 }} size={20} name="search1" onPress={onClick} />
     </Container>
   );
