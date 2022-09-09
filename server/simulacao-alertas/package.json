@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@faker-js/faker": "^7.4.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "chance": "^1.1.8",
+    "dotenv": "^16.0.1",
+    "node-fetch": "^3.2.10"
+  }
+}
