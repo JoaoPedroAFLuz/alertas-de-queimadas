@@ -23,7 +23,9 @@ export function Detalhes({ route }) {
       const alertaAPI = await api.carregarAlerta(alertaId, tipoAlerta);
 
       const data = tipoAlerta === 'humano'
-        ? moment(alertaAPI.dataHora).format('HH:mm:ss DD/MM/YYYY')
+        ? moment(alertaAPI.datahora, 'YYYY/MM/DD HH:mm:ss').format(
+          'HH:mm:ss DD/MM/YYYY',
+        )
         : moment(alertaAPI.datahora, 'YYYY/MM/DD HH:mm:ss').format(
           'HH:mm:ss DD/MM/YYYY',
         );

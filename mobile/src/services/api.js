@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { ALERTA_HUMANO_API, ALERTA_SATELITE_API } from '@env';
+import { REGISTRO_API, ALERTA_HUMANO_API, ALERTA_SATELITE_API } from '@env';
 
 export default {
   async carregarAlertas(tipoAlerta, pagina, alertasPorPagina) {
@@ -33,5 +33,18 @@ export default {
     const alerta = await response.json();
 
     return alerta;
+  },
+
+  async emitirAlerta(alerta) {
+    const url = `${REGISTRO_API}/alertas/humano`;
+
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(alerta),
+    });
   },
 };

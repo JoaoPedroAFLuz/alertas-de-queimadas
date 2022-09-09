@@ -1,6 +1,10 @@
 import { useState } from 'react';
-import { Button, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
+
+import api from '../../services/api';
 import { Input } from '../../components/Input';
 
 import {
@@ -14,12 +18,12 @@ import {
 } from './styles';
 
 export function Registro() {
-  const [cidade, setCidade] = useState('');
+  const [local, setLocal] = useState('');
   const [tipo, setTipo] = useState('');
   const [categoria, setCategoria] = useState('');
-  const [tempoPresente, setTempoPresete] = useState('');
+  const [tempo, setTempo] = useState('');
   const [observacoes, setObservacoes] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dataHora, setDatahora] = useState(new Date());
   const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const showDatePicker = () => {
@@ -31,7 +35,7 @@ export function Registro() {
   };
 
   const handleConfirm = (date) => {
-    setSelectedDate(date);
+    setDatahora(date);
     hideDatePicker();
   };
 
@@ -39,13 +43,17 @@ export function Registro() {
     Keyboard.dismiss();
   };
 
-  function save() {
-    // console.log('Cidade:', cidade);
-    // console.log('Tipo:', tipo);
-    // console.log('Categoria:', categoria);
-    // console.log('Tempo presente:', tempoPresente);
-    // console.log('Observações:', observacoes);
-    console.log('Data e hora:', selectedDate.toLocaleString());
+  async function save() {
+    const alerta = {
+      local,
+      tipo,
+      categoria,
+      tempo,
+      observacoes,
+      dataHora: moment(dataHora).format('HH:mm:ss DD/MM/YYYY'),
+    };
+
+    await api.emitirAlerta(alerta);
   }
 
   return (
@@ -58,7 +66,7 @@ export function Registro() {
         <Container>
           <Title>Informações sobre a queimada</Title>
 
-          <Input text={cidade} onChangeText={setCidade} placeholder="Cidade" />
+          <Input text={local} onChangeText={setLocal} placeholder="Cidade" />
 
           <Input text={tipo} onChangeText={setTipo} placeholder="Tipo" />
 
@@ -69,8 +77,8 @@ export function Registro() {
           />
 
           <Input
-            text={tempoPresente}
-            onChangeText={setTempoPresete}
+            text={tempo}
+            onChangeText={setTempo}
             placeholder="Tempo presente"
           />
 
@@ -84,16 +92,16 @@ export function Registro() {
             <Text color="#aaaaaa">Data e hora</Text>
 
             <Text color="#111111">
-              {selectedDate
-                ? selectedDate.toLocaleString()
-                : 'No date selected'}
+              {dataHora
+                ? moment(dataHora.toUTCString()).format('DD/MM/YYYY | HH:mm:ss')
+                : 'Selecione a data'}
             </Text>
 
             <DateTimePickerModal
-              date={selectedDate}
+              date={dataHora}
+              maximumDate={new Date()}
               isVisible={datePickerVisible}
               is24Hour
-              display="inline"
               mode="datetime"
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
