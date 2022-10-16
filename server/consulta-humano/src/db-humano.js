@@ -6,45 +6,15 @@ const database = client.db('alertas');
 const collection = database.collection('humano2021');
 await client.connect();
 
-export async function findAll(pagina, alertasPorPagina) {
+export async function findAll(pagina = 1, alertasPorPagina = 6, cidade = '') {
   try {
     let alertas = [];
 
-    const alertasPagina = (pagina - 1) * alertasPorPagina;
-
-    const cursor = collection
-      .find()
-      .sort({ dataHora: -1 })
-      .limit(alertasPorPagina)
-      .skip(alertasPagina);
-
-    await cursor.forEach((alerta) => alertas.push(alerta));
-
-    return alertas;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-export async function findOne(id) {
-  try {
-    const alerta = await collection.findOne({ _id: ObjectId(id) });
-
-    return alerta;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-export async function findAllFiltrado(pagina, alertasPorPagina, cidade) {
-  try {
-    let alertas = [];
-
-    // cidade = cidade
-    //   .normalize('NFD')
-    //   .replace(/[\u0300-\u036f]/g, '')
-    //   .toUpperCase();
-    cidade = cidade.trim();
+    cidade = cidade
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .trim();
 
     const alertasPagina = (pagina - 1) * alertasPorPagina;
 
@@ -60,4 +30,16 @@ export async function findAllFiltrado(pagina, alertasPorPagina, cidade) {
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function findOne(id) {
+  const alerta = await collection.findOne({ _id: ObjectId(id) });
+
+  if (!alerta) {
+    const error = new Error('Nenhum alerta encontrado com o id: ' + id);
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return alerta;
 }

@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 
-import { findAll, findOne, findAllFiltrado } from './db-satelite.js';
+import { findAll, findOne } from './db-satelite.js';
 
 const PORT = 3000;
 const HOST = '0.0.0.0';
@@ -17,29 +17,21 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/alertas/satelite', async (req, res) => {
-  const { pagina, alertasPorPagina } = req.query;
-
-  const alertas = await findAll(Number(pagina), Number(alertasPorPagina));
-
-  res.json(alertas);
-});
-
-app.get('/alertas/satelite/findOne/:id', async (req, res) => {
-  const { id } = req.params;
-
-  const alertas = await findOne(id);
-
-  res.json(alertas);
-});
-
-app.get('/alertas/satelite/cidade', async (req, res) => {
   const { pagina, alertasPorPagina, cidade } = req.query;
 
-  const alertas = await findAllFiltrado(
+  const alertas = await findAll(
     Number(pagina),
     Number(alertasPorPagina),
     cidade
   );
+
+  res.json(alertas);
+});
+
+app.get('/alertas/satelite/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const alertas = await findOne(id);
 
   res.json(alertas);
 });
