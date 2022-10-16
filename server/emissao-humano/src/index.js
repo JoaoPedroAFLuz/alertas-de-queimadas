@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import nodemailer from 'nodemailer';
 import { Kafka } from 'kafkajs';
 
@@ -6,8 +7,8 @@ var transport = nodemailer.createTransport({
   host: 'smtp.mailtrap.io',
   port: 2525,
   auth: {
-    user: '9c8b381bd846f2',
-    pass: 'a65292e603714d',
+    user: process.env.MAILTRAP_USER,
+    pass: process.env.MAILTRAP_PASSWORD,
   },
 });
 
@@ -24,21 +25,27 @@ const topic = 'alerta-humano';
 const consumer = kafka.consumer({ groupId: 'alerta-humano' });
 
 async function enviar(alerta) {
-  const { local, dataHora, tipo, observacoes, categoria } = alerta;
+  try {
+    const { local, dataHora, tipo, observacoes, categoria } = alerta;
 
-  await transport.sendMail({
-    from: 'Alertas de Queimadas <alertas@queimadas.com.br>',
-    to: 'Fulano <fulano@silva.com.br',
-    subject: 'Novo alerta de queimada do seu interesse',
-    html: [
-      '<h1>Alerta enviado por humano: </h1>',
-      `<p>Local: ${local}</p>`,
-      `<p>Data e hora: ${dataHora}</p>`,
-      `<p>Tipo: ${tipo}</p>`,
-      `<p>Observações: ${observacoes}</p>`,
-      `<p>Categoria: ${categoria}</p>`,
-    ].join('\n'),
-  });
+    await transport.sendMail({
+      from: 'Alertas de Queimadas <alertas@queimadas.com.br>',
+      to: 'Fulano <fulano@silva.com.br',
+      subject: 'Novo alerta de queimada do seu interesse',
+      html: [
+        '<h1>Alerta enviado por humano: </h1>',
+        `<p>Local: ${local}</p>`,
+        `<p>Data e hora: ${dataHora}</p>`,
+        `<p>Tipo: ${tipo}</p>`,
+        `<p>Observações: ${observacoes}</p>`,
+        `<p>Categoria: ${categoria}</p>`,
+      ].join('\n'),
+    });
+
+    console.log('Email enviado');
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function run() {
