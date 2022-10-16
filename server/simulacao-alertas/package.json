@@ -5,7 +5,7 @@
   "type": "module",
   "dependencies": {
     "chance": "^1.1.8",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.0.3",
     "node-fetch": "^3.2.10"
   }
 }
