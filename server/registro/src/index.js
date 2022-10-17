@@ -5,7 +5,6 @@ import { Kafka, Partitioners } from 'kafkajs';
 import routes from './routes.js';
 
 const PORT = 3000;
-const HOST = '0.0.0.0';
 
 const app = express();
 
@@ -34,8 +33,8 @@ app.use(routes);
 async function run() {
   await producer.connect();
 
-  app.listen(3000, () => {
-    console.log(`HTTP server running on ${HOST}:${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`HTTP server running on port ${PORT}`);
   });
 }
 

@@ -1,7 +1,16 @@
 import { faker } from '@faker-js/faker/locale/pt_BR';
+import express from 'express';
+import cors from 'cors';
 import fetch from 'node-fetch';
 import alertas from './satelite2021.json' assert { type: 'json' };
 import dotenv from 'dotenv/config';
+
+const PORT = 3000;
+const STATUS = 'online';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 // Método que simula a conexão com um servidor externo.
 async function sleep(ms) {
@@ -31,6 +40,7 @@ async function simularAlerta(quantidade) {
     const alerta = alertas[alertaSorteado];
     delete alerta['_id'];
 
+    // Chama o método spleep passando o tempo de 3 segundos (3000 ms)
     // await sleep(3000);
 
     await emitirAlerta(alerta);
@@ -38,6 +48,7 @@ async function simularAlerta(quantidade) {
 }
 
 // Função que conta o tempo que levou para executar o número de alertas recebidos no parâmetro.
+// Ao chamar a função tempo de execução é necessário comentar a chamada do sleep na linha 33.
 async function tempoDeExecução(quantidadeDeAlertas) {
   const start = new Date().getTime();
   await simularAlerta(quantidadeDeAlertas);
@@ -50,5 +61,27 @@ async function tempoDeExecução(quantidadeDeAlertas) {
   );
 }
 
-// Ao chamar a função tempo de execução é necessário comentar a chamada do sleep na linha 33.
-tempoDeExecução(1000);
+// Rota que retorna o status atual do serviço
+app.get('/status', (req, res) => {
+  res.json({ status: `Simulação de alertas de satélites está ${STATUS}` });
+});
+
+// Rota que recebe a quantidade de alertas a serem simulados
+app.post(
+  '/alertas/satelite/simulacao/:quantidadeDeAlertas',
+  async (req, res) => {
+    try {
+      const { quantidadeDeAlertas } = req.params;
+
+      await tempoDeExecução(quantidadeDeAlertas);
+
+      return res.sendStatus(201);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+);
+
+app.listen(PORT, () => {
+  console.log(`HTTP server running on port: ${PORT}`);
+});

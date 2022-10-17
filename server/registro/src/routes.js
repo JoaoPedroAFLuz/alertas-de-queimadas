@@ -57,14 +57,14 @@ routes.post('/alertas/satelite', async (req, res) => {
     await insertAlertaSatelite(alerta);
 
     // Envia o alerta para o tópico dos alertas de satélite no kafka
-    await req.producer.send({
-      topic: 'alerta-satelite',
-      messages: [
-        {
-          value: JSON.stringify(alerta),
-        },
-      ],
-    });
+    // await req.producer.send({
+    //   topic: 'alerta-satelite',
+    //   messages: [
+    //     {
+    //       value: JSON.stringify(alerta),
+    //     },
+    //   ],
+    // });
 
     console.log('Alerta registrado:', alerta);
     return res.sendStatus(201);
