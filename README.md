@@ -3,7 +3,7 @@
 ## Requisitos
 - GIT;
 - Docker;
-- Expo Go (instalado no telefone) ou um emulador Android ou iOS;
+- Expo Go instalado no telefone ou um emulador Android/iOS;
 
 ## Como instalar
 - Clone o projeto com o comando:
