@@ -38,7 +38,7 @@ services:
   registro:
     container_name: registro
     build: ./registro
-    command: npm start
+    command: sh -c "npm install && npm start"
     ports:
       - '3000:3000'
     volumes:
@@ -51,7 +51,7 @@ services:
   consulta-humano:
     container_name: consultaHumano
     build: ./consulta-humano
-    command: npm start
+    command: sh -c "npm install && npm start"
     ports:
       - '3001:3000'
     volumes:
@@ -62,7 +62,7 @@ services:
   consulta-satelite:
     container_name: consultaSatelite
     build: ./consulta-satelite
-    command: npm start
+    command: sh -c "npm install && npm start"
     ports:
       - '3002:3000'
     volumes:
@@ -73,7 +73,7 @@ services:
   emissao-humano:
     container_name: emissaoHumano
     build: ./emissao-humano
-    command: npm start
+    command: sh -c "npm install && npm start"
     volumes:
       - './emissao-humano:/usr/app'
     depends_on:
@@ -83,7 +83,7 @@ services:
   emissao-satelite:
     container_name: emissaoSatelite
     build: ./emissao-satelite
-    command: npm start
+    command: sh -c "npm install && npm start"
     volumes:
       - './emissao-satelite:/usr/app'
     depends_on:
@@ -93,7 +93,7 @@ services:
   simulacao-satelite:
     container_name: simulacaoSatelite
     build: ./simulacao-satelite
-    command: npm start
+    command: sh -c "npm install && npm start"
     ports:
       - '3003:3000'
     volumes:
