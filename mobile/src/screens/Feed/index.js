@@ -105,7 +105,10 @@ export function Feed({ navigation }) {
         </BotaoAlerta>
       </ContainerBotao>
 
-      <SearchBar setBusca={setCidade} onClick={() => carregarAlertasFiltrados()} />
+      <SearchBar
+        setBusca={setCidade}
+        onClick={() => carregarAlertasFiltrados()}
+      />
 
       <FlatListAlertas
         data={alertas}
