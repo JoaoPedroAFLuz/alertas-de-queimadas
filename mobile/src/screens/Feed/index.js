@@ -36,6 +36,7 @@ export function Feed({ navigation }) {
       tipoAlerta,
       pagina,
       alertasPorPagina,
+      cidade,
     );
 
     setUltimaPagina(novosAlertas.length === 0);
@@ -50,9 +51,9 @@ export function Feed({ navigation }) {
 
     setIsLoading(true);
 
-    const novosAlertas = await api.carregarAlertasFiltrados(
+    const novosAlertas = await api.carregarAlertas(
       tipoAlerta,
-      pagina,
+      1,
       alertasPorPagina,
       cidade,
     );
@@ -88,7 +89,6 @@ export function Feed({ navigation }) {
         <BotaoAlerta
           onPress={() => handleTipoDeAlerta('humano')}
           disabled={tipoAlerta === 'humano'}
-          title="Teste"
         >
           <TextoAlerta disabled={tipoAlerta === 'humano'}>
             Alertas humano
@@ -114,7 +114,7 @@ export function Feed({ navigation }) {
         data={alertas}
         keyExtractor={() => String(Math.random())}
         onEndReached={() => carregarAlertas()}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.3}
         ListFooterComponent={<Loading loading={isLoading} />}
         renderItem={({ item }) => renderizarAlerta(item)}
       />
