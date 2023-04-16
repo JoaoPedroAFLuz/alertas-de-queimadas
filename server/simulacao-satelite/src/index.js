@@ -40,7 +40,7 @@ async function simularAlerta(quantidade) {
     const alerta = alertas[alertaSorteado];
     delete alerta['_id'];
 
-    // Chama o método spleep passando o tempo de 3 segundos (3000 ms)
+    // Chama o método sleep passando o tempo de 3 segundos (3000 ms)
     // await sleep(3000);
 
     await emitirAlerta(alerta);
